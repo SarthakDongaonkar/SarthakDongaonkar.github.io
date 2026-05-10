@@ -52,13 +52,13 @@ const contactForm = document.querySelector('.contact-form');
 if (contactForm) {
     contactForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        alert('Thank you for your message! I will get back to you soon.');
+        alert('🎉 Thank you for your message! I will get back to you soon.');
         contactForm.reset();
     });
 }
 
 // Ripple effect on buttons
-const buttons = document.querySelectorAll('.btn, .social-btn');
+const buttons = document.querySelectorAll('.btn, .social-btn, .profile-link, .project-link');
 buttons.forEach(button => {
     button.addEventListener('click', function(e) {
         const ripple = document.createElement('span');
@@ -110,14 +110,14 @@ navLinks.forEach(link => {
 
 // Scroll to top button
 const scrollTopBtn = document.createElement('button');
-scrollTopBtn.innerHTML = '↑';
+scrollTopBtn.innerHTML = '⬆️';
 scrollTopBtn.style.cssText = `
     position: fixed;
     bottom: 30px;
     right: 30px;
-    width: 50px;
-    height: 50px;
-    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    width: 55px;
+    height: 55px;
+    background: linear-gradient(135deg, #FF6B35, #FF006E);
     color: white;
     border: none;
     border-radius: 50%;
@@ -126,14 +126,16 @@ scrollTopBtn.style.cssText = `
     display: none;
     z-index: 999;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 8px 25px rgba(255, 107, 53, 0.3);
 `;
 
 document.body.appendChild(scrollTopBtn);
 
 window.addEventListener('scroll', () => {
     if (window.scrollY > 300) {
-        scrollTopBtn.style.display = 'block';
+        scrollTopBtn.style.display = 'flex';
+        scrollTopBtn.style.alignItems = 'center';
+        scrollTopBtn.style.justifyContent = 'center';
     } else {
         scrollTopBtn.style.display = 'none';
     }
@@ -144,17 +146,19 @@ scrollTopBtn.addEventListener('click', () => {
 });
 
 scrollTopBtn.addEventListener('mouseenter', () => {
-    scrollTopBtn.style.transform = 'scale(1.1)';
+    scrollTopBtn.style.transform = 'scale(1.15)';
+    scrollTopBtn.style.boxShadow = '0 15px 50px rgba(255, 107, 53, 0.4)';
 });
 
 scrollTopBtn.addEventListener('mouseleave', () => {
     scrollTopBtn.style.transform = 'scale(1)';
+    scrollTopBtn.style.boxShadow = '0 8px 25px rgba(255, 107, 53, 0.3)';
 });
 
 // Add ripple style
 const style = document.createElement('style');
 style.textContent = `
-    .btn, .social-btn {
+    .btn, .social-btn, .profile-link, .project-link {
         position: relative;
         overflow: hidden;
     }
@@ -162,7 +166,7 @@ style.textContent = `
     .ripple {
         position: absolute;
         border-radius: 50%;
-        background: rgba(255, 255, 255, 0.5);
+        background: rgba(255, 255, 255, 0.6);
         transform: scale(0);
         animation: ripple-animation 0.6s ease-out;
         pointer-events: none;
@@ -192,11 +196,49 @@ const observer = new IntersectionObserver((entries) => {
     });
 }, observerOptions);
 
-document.querySelectorAll('.profile-card, .timeline-content, .activity-card, .project-card, .skill-category, .gallery-item').forEach(el => {
+document.querySelectorAll('.profile-card, .timeline-content, .activity-card, .project-card, .skill-category, .gallery-item, .stat-item').forEach(el => {
     el.style.opacity = '0';
     el.style.transform = 'translateY(20px)';
     el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
     observer.observe(el);
 });
 
-console.log('Profile website loaded successfully!');
+// Counter animation for stats
+function animateCounters() {
+    const statNumbers = document.querySelectorAll('.stat-number');
+    
+    statNumbers.forEach(stat => {
+        const target = parseInt(stat.textContent.replace(/\D/g, ''));
+        const suffix = stat.textContent.replace(/[0-9]/g, '');
+        let count = 0;
+        const increment = target / 100;
+        
+        const updateCount = () => {
+            count += increment;
+            if (count < target) {
+                stat.textContent = Math.floor(count) + suffix;
+                requestAnimationFrame(updateCount);
+            } else {
+                stat.textContent = target + suffix;
+            }
+        };
+        
+        updateCount();
+    });
+}
+
+// Trigger counter animation when stats section is visible
+const statsSection = document.querySelector('.stats');
+if (statsSection) {
+    const statsObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                animateCounters();
+                statsObserver.unobserve(entry.target);
+            }
+        });
+    });
+    statsObserver.observe(statsSection);
+}
+
+console.log('🚀 Profile website loaded successfully!');
